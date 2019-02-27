@@ -1,45 +1,58 @@
 import pandas as pd
-import sys
-from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score
 
-DATA_FILE = 'D:\\Dev\\machine_learning\\data\\tokens_by_lang\\surveys_en.csv'
+EN_TOKENIZED_DATA = 'tokens_by_lang/surveys_en.csv'
+DE_TOKENIZED_DATA = 'tokens_by_lang/surveys_de.csv'
 
-INPUT_COLUMNS = [
-    'survey_uuid',
-    'jobsite',
-    'language',
-    'campaing_id',
-    'areas_of_improvement',
-    'pros',
-    'responsibilities',
-    'review_title',
-    'status',
-    'rejection_reason',
-    'survey_start_time',
-    'moderation_end_time',
-    'text',
-    'detected_language',
-    'tokens'
-]
 
-def loadDataset(path):
-    df = pd.read_csv(path, sep=',', error_bad_lines=False, header=None)
-    df.columns = INPUT_COLUMNS
+def load_dataset(path):
+    df = pd.read_csv(path, sep=',', error_bad_lines=False)
+    df = df[['tokens', 'status']]
     return df
 
-def classify(inputCsvPath):
-    dataSet = loadDataset(inputCsvPath)
 
-    trainReviews = dataSet.loc[0:999, 'tokens'].values
-    # trainStatuses = dataSet.loc[:24999, 'status'].values
-    testReviews = dataSet.loc[1000:1999, 'tokens'].values
-    # testStatuses = dataSet.loc[25000:, 'status'].values
+def filter_status(df):
+    return df[df['status'].isin(['ACCEPTED', 'REJECTED'])]
 
-    vectorizer = TfidfVectorizer()
-    train_vectors = vectorizer.fit_transform(trainReviews)
-    test_vectors = vectorizer.transform(testReviews)
-    print(train_vectors.shape, test_vectors.shape)
+
+def vectorize_data(inputCsvPath):
+    df = load_dataset(inputCsvPath)
+    df = filter_status(df)
+
+    X = df['tokens']
+    y = df['status']
+
+    vectorizer = TfidfVectorizer(max_features=2000)
+    X = vectorizer.fit_transform(X)
+
+    y = y.map({'ACCEPTED': 1, 'REJECTED': 0})
+
+    return train_test_split(X, y, test_size=0.33, random_state=42)
+
+
+def create_classifier(X_train, y_train, data_file):
+    classifier = MultinomialNB()
+    print(f'training classifier for {data_file}')
+    classifier.fit(X_train, y_train)
+    return classifier
+
+
+def calculate_accuracy(y_predicted, y_test):
+    return accuracy_score(y_test, y_predicted)
+
+
+def make_magic_happen(data_file):
+    X_train, X_test, y_train, y_test = vectorize_data(data_file)
+    classifier = create_classifier(X_train, y_train, data_file)
+
+    y_predicted = classifier.predict(X_test)
+    accuracy = calculate_accuracy(y_predicted, y_test)
+    print(data_file, ': ', accuracy)
+
 
 if __name__ == '__main__':
-    classify(DATA_FILE)
+    make_magic_happen(EN_TOKENIZED_DATA)
+    make_magic_happen(DE_TOKENIZED_DATA)
