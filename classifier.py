@@ -37,7 +37,7 @@ def vectorize_data(inputCsvPath):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
-    vectorizer = TfidfVectorizer(max_features=2000)
+    vectorizer = TfidfVectorizer(max_features=3000, ngram_range=(2,3))
 
     X_train = vectorizer.fit_transform(X_train)
     X_test = vectorizer.transform(X_test)
