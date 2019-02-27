@@ -4,23 +4,28 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 
-EN_TOKENIZED_DATA = 'tokens_by_lang/surveys_en.csv'
-DE_TOKENIZED_DATA = 'tokens_by_lang/surveys_de.csv'
+EN_TOKENIZED_DATA = '../data/tokens_by_lang/surveys_en.csv'
+DE_TOKENIZED_DATA = '../data/tokens_by_lang/surveys_de.csv'
 
 
 def load_dataset(path):
     df = pd.read_csv(path, sep=',', error_bad_lines=False)
-    df = df[['tokens', 'status']]
+    df = df[['tokens', 'status', 'language', 'detected_language']]
     return df
 
 
 def filter_status(df):
-    return df[df['status'].isin(['ACCEPTED', 'REJECTED'])]
+    df = df[df['status'].isin(['ACCEPTED', 'REJECTED'])]
+    return df
 
+def filter_language(df):
+    df = df[df['language'] == df['detected_language']]
+    return df
 
 def vectorize_data(inputCsvPath):
     df = load_dataset(inputCsvPath)
     df = filter_status(df)
+    df = filter_language(df)
 
     X = df['tokens']
     y = df['status']
