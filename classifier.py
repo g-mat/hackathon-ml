@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, confusion_matrix
 
 EN_TOKENIZED_DATA = '../data/tokens_by_lang/surveys_en.csv'
 DE_TOKENIZED_DATA = '../data/tokens_by_lang/surveys_de.csv'
@@ -59,6 +59,7 @@ def make_magic_happen(data_file):
 
     y_predicted = classifier.predict(X_test)
     accuracy = calculate_accuracy(y_predicted, y_test)
+    print(confusion_matrix(y_test, y_predicted))
     print(data_file, ': ', accuracy)
 
 
