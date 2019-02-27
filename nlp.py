@@ -2,6 +2,7 @@ import nltk
 import pandas as pd
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
+from nltk.stem.porter import PorterStemmer
 
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -12,6 +13,7 @@ EN_TOKEN_DATA_FILE_PATH = 'tokens_by_lang/surveys_en.csv'
 DE_TOKEN_DATA_FILE_PATH = 'tokens_by_lang/surveys_de.csv'
 
 TOKENIZER = RegexpTokenizer(r'\w+')
+STEMMER = PorterStemmer()
 
 
 def get_dataset(path):
@@ -23,6 +25,7 @@ def get_dataset(path):
 def create_tokens(df, stop_words):
     df['tokens'] = df['text'].apply(lambda text: TOKENIZER.tokenize(text))
     df['tokens'] = df['tokens'].apply(lambda tokens: [token for token in tokens if token not in stop_words])
+    df['tokens'] = df['tokens'].apply(lambda tokens: [STEMMER.stem(token) for token in tokens])
     return df
 
 
