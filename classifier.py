@@ -10,12 +10,13 @@ DE_TOKENIZED_DATA = '../data/tokens_by_lang/surveys_de.csv'
 
 def load_dataset(path):
     df = pd.read_csv(path, sep=',', error_bad_lines=False)
-    df = df[['tokens', 'status', 'language', 'detected_language']]
+    df = df[['tokens', 'status', 'rejection_reason', 'language', 'detected_language']]
     return df
 
 
 def filter_status(df):
     df = df[df['status'].isin(['ACCEPTED', 'REJECTED'])]
+    # df = df[df['rejection_reason'].notna()]
     return df
 
 def filter_language(df):
@@ -52,14 +53,19 @@ def create_classifier(X_train, y_train, data_file):
 def calculate_accuracy(y_predicted, y_test):
     return accuracy_score(y_test, y_predicted)
 
+def map_probabilities_by_treshold(probs, treshold):
+    return list(map(lambda prob: 1 if prob[0] < treshold else 0, probs))
 
 def make_magic_happen(data_file):
     X_train, X_test, y_train, y_test = vectorize_data(data_file)
     classifier = create_classifier(X_train, y_train, data_file)
 
-    y_predicted = classifier.predict(X_test)
-    accuracy = calculate_accuracy(y_predicted, y_test)
-    print(confusion_matrix(y_test, y_predicted))
+    y_predicted = classifier.predict_proba(X_test)
+    y_predicted2 = map_probabilities_by_treshold(y_predicted, 0.01) # closer to 0 -> less false-positives
+    # print(y_predicted)
+
+    accuracy = calculate_accuracy(y_predicted2, y_test)
+    print(confusion_matrix(y_test, y_predicted2))
     print(data_file, ': ', accuracy)
 
 
