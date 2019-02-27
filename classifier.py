@@ -1,6 +1,8 @@
+import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score, confusion_matrix
 
@@ -65,8 +67,10 @@ def make_magic_happen(data_file):
     # print(y_predicted)
 
     accuracy = calculate_accuracy(y_predicted2, y_test)
-    print(confusion_matrix(y_test, y_predicted2))
+    matrix = confusion_matrix(y_test, y_predicted2)
     print(data_file, ': ', accuracy)
+    print('confusion matrix without normalization:\n', matrix)
+    print('confusion matrix with normalization:\n', matrix.astype('float') / matrix.sum(axis=1)[:, np.newaxis])
 
 
 if __name__ == '__main__':

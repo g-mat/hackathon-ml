@@ -3,21 +3,6 @@ from langdetect import detect as _detect
 
 DATA_FILE_PATH = '../data/surveys_escaped.csv'
 
-COLUMN_NAMES = [
-    'survey_uuid',
-    'jobsite',
-    'language',
-    'campaing_id',
-    'areas_of_improvement',
-    'pros',
-    'responsibilities',
-    'review_title',
-    'status',
-    'rejection_reason',
-    'survey_start_time',
-    'moderation_end_time'
-]
-
 
 def detect(text):
     try:
@@ -28,8 +13,7 @@ def detect(text):
 
 
 def get_dataset(path):
-    df = pd.read_csv(path, sep='\t', error_bad_lines=False, header=None)
-    df.columns = COLUMN_NAMES
+    df = pd.read_csv(path, error_bad_lines=False, escapechar='\\')
     return df
 
 
@@ -39,7 +23,6 @@ def add_detected_language(df):
                  df['responsibilities'].map(str) + \
                  df['review_title'].map(str)
     df['detected_language'] = df['text'].apply(detect)
-    print(df.detected_language.value_counts())
     return df
 
 
