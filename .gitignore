@@ -2,3 +2,4 @@ hackathon-ml.iml
 surveys.jsonl
 .idea
 .DS_Store
+*.csv
