@@ -1,18 +1,38 @@
-import json_lines
+import pandas as pd
 import nltk
+
+from langdetect import detect as _detect
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
 nltk.download('stopwords')
 nltk.download('punkt')
 
-en_stop_words = set(stopwords.words('english'))
-de_stop_words = set(stopwords.words('german'))
+EN_SURVEY_DATA_FILE_PATH = 'surveys_by_lang/surveys_en.csv'
+DE_SURVEY_DATA_FILE_PATH = 'surveys_by_lang/surveys_en.csv'
+EN_TOKEN_DATA_FILE_PATH = 'tokens_by_lang/surveys_en.csv'
+DE_TOKEN_DATA_FILE_PATH = 'tokens_by_lang/surveys_en.csv'
 
-with open('surveys.jsonl', 'rb') as f:
-    for item in json_lines.reader(f):
-        if item['language'] == 'en':
-            phrase = ' '.join(filter(None, [item['pros'], item['areas_of_improvement'], item['responsibilities'], item['review_title']])).lower()
-            tokens = word_tokenize(phrase, 'english')
-            filtered_tokens = [token for token in tokens if token not in en_stop_words]
-            print(filtered_tokens)
+
+def get_dataset(path):
+    df = pd.read_csv(path, sep=',', error_bad_lines=False)
+    df = df.dropna(subset=['text'])
+    return df
+
+
+def create_tokens(df, stop_words, language):
+    df['tokens'] = df['text'].apply(lambda text: word_tokenize(text, language))
+    df['tokens'] = df['tokens'].apply(lambda tokens: [token for token in tokens if token not in stop_words])
+    return df
+
+
+def process(survey_file, tokens_file, language):
+    stop_words = set(stopwords.words(language))
+    df = get_dataset(survey_file)
+    df = create_tokens(df, stop_words, language)
+    df.to_csv(tokens_file, index=False)
+
+
+if __name__ == '__main__':
+    process(EN_SURVEY_DATA_FILE_PATH, EN_TOKEN_DATA_FILE_PATH, 'english')
+    process(DE_SURVEY_DATA_FILE_PATH, DE_TOKEN_DATA_FILE_PATH, 'german')
