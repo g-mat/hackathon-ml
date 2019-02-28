@@ -37,12 +37,23 @@ def vectorize_data(inputCsvPath):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
-    vectorizer = TfidfVectorizer(max_features=3000, ngram_range=(2,3))
+    vectorizer = TfidfVectorizer(max_features=3000, ngram_range=(1,3))
 
     X_train = vectorizer.fit_transform(X_train)
+
+    print_top_features(vectorizer, 50)
+
     X_test = vectorizer.transform(X_test)
 
     return X_train, X_test, y_train, y_test
+
+def print_top_features(vectorizer,count):
+    indices = np.argsort(vectorizer.idf_)[::-1]
+    features = vectorizer.get_feature_names()
+    top_features = [features[i] for i in indices[:count]]
+    print("TOP FEATURES:")
+    print(top_features)
+    print("#############")
 
 
 def create_classifier(X_train, y_train, data_file):
