@@ -2,13 +2,10 @@ from flask import Flask, jsonify, request
 from langdetect import detect
 from textblob import TextBlob
 from profanity import profanity as prof
+from flask_cors import CORS
 
 app = Flask(__name__)
-
-
-def calculate_sentiment(text):
-    blob = TextBlob(text)
-    return blob.sentiment
+CORS(app)
 
 
 @app.route('/get_language', methods=['POST'])
@@ -19,11 +16,10 @@ def language():
 
 @app.route('/get_sentiment', methods=['POST'])
 def sentiment():
-    text = request.get_json()['text']
-    calculated_sentiment = calculate_sentiment(text)
+    blob = TextBlob(request.get_json()['text'])
     return jsonify({
-        'polarity': calculated_sentiment.polarity,
-        'subjectivity': calculated_sentiment.subjectivity
+        'polarity': blob.sentiment.polarity,
+        'subjectivity': blob.sentiment.subjectivity
     })
 
 
