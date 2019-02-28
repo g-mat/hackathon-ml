@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
-<body>
-<div class="panel panel-default">
+<body style="padding: 50px">
+<div class="panel panel-default" style="padding: 10px">
     <form id="sentimentForm">
         <strong>Sentiment:</strong><input type="text" name="sentiment" class="form-control" autocomplete="off">
         <div class="well-lg">
@@ -20,20 +20,20 @@
         <input type="submit" value="Submit" class="btn btn-info">
     </form>
 </div>
-<div class="panel panel-default">
+<div class="panel panel-default" style="padding: 10px">
     <form id="profanityForm">
         <strong>Profanity:</strong><input type="text" name="profanity" class="form-control" autocomplete="off">
         <div class="well-lg">
-            <span id="profanityVal"></span><br>
+            Is profanity: <span id="profanityVal"></span><br>
         </div>
         <input type="submit" value="Submit" class="btn btn-info">
     </form>
 </div>
-<div class="panel panel-default">
+<div class="panel panel-default" style="padding: 10px">
     <form id="languageForm">
         <strong>Language:</strong><input type="text" name="language" class="form-control" autocomplete="off">
         <div class="well-lg">
-            <span id="languageVal"></span><br>
+            Language code: <span id="languageVal"></span><br>
         </div>
         <input type="submit" value="Submit" class="btn btn-info">
     </form>

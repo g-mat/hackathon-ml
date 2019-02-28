@@ -24,8 +24,8 @@ BRANDS = ['stepstone', 'tjg', 'ycg', 'irishjobs.ie']
 VECTORIZERS = {}
 DIRECTORY = ''
 TOKENIZER = RegexpTokenizer(r'\w+')
-CLASS_COLUMN = 'status'
-# CLASS_COLUMN = 'rejection_reason'
+# CLASS_COLUMN = 'status'
+CLASS_COLUMN = 'rejection_reason'
 
 
 def load_dataset(path):
@@ -88,7 +88,7 @@ def generate_word_count_plot(df, brand, lang):
     class_y = df[CLASS_COLUMN]
     class_features = vectorizer.get_feature_names()
     class_top_dfs = top_feats_by_class(class_Xtr, class_y, class_features)
-    plot_tfidf_classfeats_h(class_top_dfs, brand, lang, 2)
+    plot_tfidf_classfeats_h(class_top_dfs, brand, lang, 20)
 
 
 def make_magic_happen(brand, lang):
