@@ -8,7 +8,6 @@ def detect(text):
     try:
         return _detect(text)
     except:
-        print(text)
         return 'NOPE'
 
 
@@ -18,10 +17,8 @@ def get_dataset(path):
 
 
 def add_detected_language(df):
-    df['text'] = df['areas_of_improvement'].map(str) + \
-                 df['pros'].map(str) + \
-                 df['responsibilities'].map(str) + \
-                 df['review_title'].map(str)
+    cols = ['areas_of_improvement', 'pros', 'responsibilities', 'review_title']
+    df['text'] = df[cols].apply(lambda row: ' '.join(row.dropna()), axis=1)
     df['detected_language'] = df['text'].apply(detect)
     return df
 
